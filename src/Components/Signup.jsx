@@ -58,7 +58,7 @@ const Signup = () => {
         await setDoc(doc(database, 'Users', user.uid), {
           id: user.uid,
           email: user.email,
-          name: Fname,
+          name: name,
           profileImage: imageURL
         })
       }
