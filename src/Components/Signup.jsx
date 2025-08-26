@@ -41,9 +41,10 @@ const Signup = () => {
     resolver: zodResolver(formSchema)
   })
 
-  const handleSignup = async e => {
-    e.preventDefault()
+  const handleSignup = async data => {
+    // e.preventDefault()
     try {
+      const {name , email , password} = data
       await createUserWithEmailAndPassword(auth, email, password)
       const user = auth.currentUser
 
@@ -61,7 +62,6 @@ const Signup = () => {
           profileImage: imageURL
         })
       }
-
       toast.success(`Signup Successfully! Welcome ${Fname}`)
     } catch (error) {
       toast.error('Oops! Signup failed')
@@ -84,7 +84,7 @@ const Signup = () => {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(console.log)}>
+          <form onSubmit={handleSubmit(handleSignup)}>
             <div className='flex flex-col gap-6'>
               <div className='grid gap-2'>
                 <Label htmlFor='email'>Email</Label>
