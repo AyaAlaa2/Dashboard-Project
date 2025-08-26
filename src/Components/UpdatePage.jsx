@@ -15,10 +15,12 @@ import { Label } from '@/Components/ui/label'
 import { toast } from 'sonner'
 import { auth, database, storage } from './Firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { useNavigate } from 'react-router-dom'
 
 const UpdatePage = () => {
   const [userDetailes, setUserDetailes] = useState(null)
   const [loading, setLoading] = useState(true)
+  const link = useNavigate()
 
   const fechData = async () => {
     auth.onAuthStateChanged(async user => {
@@ -47,7 +49,7 @@ const UpdatePage = () => {
           // profileImage: userDetailes.avatar
         })
         toast.success('Update Successfully !')
-        window.location.href = '/dashboard'
+        link('/dashboard')
       } catch (error) {
         toast.error('Oops ! Update failed')
       }

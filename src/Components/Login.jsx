@@ -15,9 +15,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from './Firebase'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
+
+
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -29,7 +28,7 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password)
       toast.success(`Login Successfully!`)
-      window.location.href = '/dashboard'
+      link('/dashboard')
     } catch (e) {
       toast.error('Oops! Incrrect Email or password')
     }

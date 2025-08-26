@@ -38,7 +38,7 @@ const Dashboard = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth)
-      window.location.href = '/login'
+      link('/login')
     } catch (error) {
       console.error(error)
     }
