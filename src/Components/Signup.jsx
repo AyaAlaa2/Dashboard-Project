@@ -62,8 +62,8 @@ const Signup = () => {
           profileImage: imageURL
         })
       }
+      link('/login')
       toast.success(`Signup Successfully! Welcome ${name}`)
-      link("/login")
     } catch (error) {
       toast.error('Oops! Signup failed')
     }
