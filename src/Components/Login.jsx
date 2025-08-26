@@ -29,7 +29,7 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password)
       toast.success(`Login Successfully!`)
-      window.location.href ="/dashboard"
+      window.location.href = '/dashboard'
     } catch (e) {
       toast.error('Oops! Incrrect Email or password')
     }
@@ -50,7 +50,7 @@ const Login = () => {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleLogin}>
             <div className='flex flex-col gap-6'>
               <div className='grid gap-2'>
                 <Label htmlFor='email'>Email</Label>
@@ -82,17 +82,15 @@ const Login = () => {
                 />
               </div>
             </div>
+            <Button
+              type='submit'
+              className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-lg transition duration-400 mt-5'
+              // onClick={handleLogin}
+            >
+              Login
+            </Button>
           </form>
         </CardContent>
-        <CardFooter className='flex-col gap-2'>
-          <Button
-            type='submit'
-            className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-lg transition duration-400'
-            onClick={handleLogin}
-          >
-            Login
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   )

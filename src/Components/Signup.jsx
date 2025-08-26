@@ -44,7 +44,7 @@ const Signup = () => {
   const handleSignup = async data => {
     // e.preventDefault()
     try {
-      const {name , email , password} = data
+      const { name, email, password } = data
       await createUserWithEmailAndPassword(auth, email, password)
       const user = auth.currentUser
 
@@ -59,7 +59,7 @@ const Signup = () => {
           id: user.uid,
           email: user.email,
           name: name,
-          // profileImage: imageURL
+          profileImage: imageURL
         })
       }
       toast.success(`Signup Successfully! Welcome ${name}`)
@@ -141,17 +141,14 @@ const Signup = () => {
                 />
               </div> */}
             </div>
+            <Button
+              type='submit'
+              className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-md transition duration-400 hover:bg-black/80 mt-5'
+            >
+              Signup
+            </Button>
           </form>
         </CardContent>
-        <CardFooter className='flex-col gap-2 mt-5'>
-          <Button
-            type='submit'
-            className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-md transition duration-400 hover:bg-black/80'
-            onClick={handleSignup}
-          >
-            Signup
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   )
