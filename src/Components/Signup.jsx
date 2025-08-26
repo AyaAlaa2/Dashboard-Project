@@ -59,10 +59,10 @@ const Signup = () => {
           id: user.uid,
           email: user.email,
           name: name,
-          profileImage: imageURL
+          // profileImage: imageURL
         })
       }
-      toast.success(`Signup Successfully! Welcome ${Fname}`)
+      toast.success(`Signup Successfully! Welcome ${name}`)
     } catch (error) {
       toast.error('Oops! Signup failed')
     }
