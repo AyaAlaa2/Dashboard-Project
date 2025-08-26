@@ -39,7 +39,8 @@ const UpdatePage = () => {
     fechData()
   }, [])
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (e) => {
+    e.preventDefault()
     auth.onAuthStateChanged(async user => {
       const userRef = doc(database, 'Users', user.uid)
       try {
