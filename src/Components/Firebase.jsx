@@ -2,7 +2,6 @@ import { initializeApp } from "firebase/app";
 import {getAuth} from "firebase/auth"
 import {getFirestore} from "firebase/firestore"
 import { getStorage } from "firebase/storage"
-import { onAuthStateChanged } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: "AIzaSyDEpvitUn1km64oHxhVYXOx-GF7Uwk_0lY",

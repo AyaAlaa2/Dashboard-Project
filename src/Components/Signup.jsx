@@ -55,6 +55,7 @@ const Signup = () => {
       // }
       if (user) {
         await setDoc(doc(database, 'Users', user.uid), {
+          id: user.uid,
           email: user.email,
           name: Fname,
           profileImage: imageURL
@@ -92,8 +93,8 @@ const Signup = () => {
                   type='email'
                   {...register('email')}
                   placeholder='m@example.com'
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  // value={email}
+                  // onChange={e => setEmail(e.target.value)}
                   required
                 />
                 {errors.email && (
@@ -106,8 +107,8 @@ const Signup = () => {
                   id='FName'
                   type='text'
                   {...register('name')}
-                  value={Fname}
-                  onChange={e => setName(e.target.value)}
+                  // value={Fname}
+                  // onChange={e => setName(e.target.value)}
                   required
                 />
                 {errors.name && (
@@ -119,9 +120,9 @@ const Signup = () => {
                 <Input
                   id='password'
                   type='password'
-                  {...register('name')}
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  {...register('password')}
+                  // value={password}
+                  // onChange={e => setPassword(e.target.value)}
                   required
                 />
                 {errors.password && (

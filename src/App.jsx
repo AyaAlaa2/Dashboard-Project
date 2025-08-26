@@ -25,9 +25,9 @@ function App ({ Component, pageProps }) {
   return (
     <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
       <Routes>
-        <Route path='/' element={user ? <Dashboard /> : <Login />} />
-        <Route path='/login' element={user ? <Dashboard /> : <Login />} />
-        <Route path='/signup' element={user ? <Dashboard /> : <Signup />} />
+        <Route path='/' element={<Login />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/signup' element={<Signup />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/updateUser' element={<UpdatePage />} />
       </Routes>

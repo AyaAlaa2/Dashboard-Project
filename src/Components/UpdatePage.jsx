@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar'
 import { Button } from '@/Components/ui/button'
 import {
   Card,
@@ -44,7 +44,7 @@ const UpdatePage = () => {
         await updateDoc(userRef, {
           name: userDetailes.name,
           email: userDetailes.email
-          // avatar: userDetailes.avatar
+          // profileImage: userDetailes.avatar
         })
         toast.success('Update Successfully !')
         window.location.href = '/dashboard'
