@@ -63,6 +63,7 @@ const Signup = () => {
         })
       }
       toast.success(`Signup Successfully! Welcome ${name}`)
+      link("/login")
     } catch (error) {
       toast.error('Oops! Signup failed')
     }

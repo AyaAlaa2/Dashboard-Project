@@ -74,7 +74,7 @@ const UpdatePage = () => {
             </Avatar>
           </CardHeader>
           <CardContent>
-            <form>
+            <form onSubmit={handleUpdate}>
               <div className='flex flex-col gap-6'>
                 <div className='flex flex-row gap-2'>
                   <Label htmlFor='email'>Email:</Label>
@@ -107,17 +107,14 @@ const UpdatePage = () => {
                   <Input id='Image' type='file' accept='/image' />
                 </div> */}
               </div>
+              <Button
+                type='submit'
+                className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-md transition duration-400 hover:bg-black/80 mt-5'
+              >
+                Save
+              </Button>
             </form>
           </CardContent>
-          <CardFooter className='flex-col gap-2 mt-5'>
-            <Button
-              type='submit'
-              className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-md transition duration-400 hover:bg-black/80'
-              onClick={handleUpdate}
-            >
-              Save
-            </Button>
-          </CardFooter>
         </Card>
       )}
     </div>
