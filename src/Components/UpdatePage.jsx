@@ -39,22 +39,22 @@ const UpdatePage = () => {
     fechData()
   }, [])
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = async e => {
     e.preventDefault()
-    auth.onAuthStateChanged(async user => {
-      const userRef = doc(database, 'Users', user.uid)
-      try {
-        await updateDoc(userRef, {
-          name: userDetailes.name,
-          email: userDetailes.email
-          // profileImage: userDetailes.avatar
-        })
-        toast.success('Update Successfully !')
-        link('/dashboard')
-      } catch (error) {
-        toast.error('Oops ! Update failed')
-      }
-    })
+    const user = auth.currentUser
+    const userRef = doc(database, 'Users', user.uid)
+
+    try {
+      await updateDoc(userRef, {
+        name: userDetailes.name,
+        email: userDetailes.email
+        // profileImage: userDetailes.avatar
+      })
+      toast.success('Update Successfully !')
+      link('/dashboard')
+    } catch (error) {
+      toast.error('Oops ! Update failed')
+    }
   }
 
   return (
