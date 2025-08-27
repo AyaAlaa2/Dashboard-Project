@@ -22,9 +22,6 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 const Signup = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [Fname, setName] = useState('')
   const [image, setImage] = useState()
   const link = useNavigate()
   const formSchema = z.object({
@@ -42,7 +39,6 @@ const Signup = () => {
   })
 
   const handleSignup = async data => {
-    // e.preventDefault()
     try {
       const { name, email, password } = data
       await createUserWithEmailAndPassword(auth, email, password)
@@ -59,6 +55,7 @@ const Signup = () => {
           id: user.uid,
           email: user.email,
           name: name,
+          password: password,
           profileImage: imageURL
         })
       }
@@ -94,8 +91,6 @@ const Signup = () => {
                   type='email'
                   {...register('email')}
                   placeholder='m@example.com'
-                  // value={email}
-                  // onChange={e => setEmail(e.target.value)}
                   required
                 />
                 {errors.email && (
@@ -103,13 +98,11 @@ const Signup = () => {
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='FName'>Name</Label>
+                <Label htmlFor='name'>Name</Label>
                 <Input
-                  id='FName'
+                  id='name'
                   type='text'
                   {...register('name')}
-                  // value={Fname}
-                  // onChange={e => setName(e.target.value)}
                   required
                 />
                 {errors.name && (
@@ -122,8 +115,6 @@ const Signup = () => {
                   id='password'
                   type='password'
                   {...register('password')}
-                  // value={password}
-                  // onChange={e => setPassword(e.target.value)}
                   required
                 />
                 {errors.password && (
@@ -137,7 +128,7 @@ const Signup = () => {
                 <Input
                   id='photo'
                   type='file'
-                  accept='/image'
+                  accept="image/*
                   onChange={e => setImage(e.target.files[0])}
                 />
               </div> */}

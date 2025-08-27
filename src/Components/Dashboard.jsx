@@ -17,6 +17,7 @@ import { auth, database, storage } from './Firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import { useNavigate } from 'react-router-dom'
 import { signOut } from 'firebase/auth'
+import { sendEmailVerification } from 'firebase/auth'
 
 const Dashboard = () => {
   const [userDetailes, setUserDetailes] = useState(null)
@@ -26,6 +27,9 @@ const Dashboard = () => {
     auth.onAuthStateChanged(async user => {
       const docSnap = await getDoc(doc(database, 'Users', user.uid))
       if (docSnap.exists()) {
+        if (!user.emailVerified) {
+          toast.info('You need to active your email !')
+        }
         setUserDetailes(docSnap.data())
         setLoading(false)
       } else {
@@ -100,6 +104,26 @@ const Dashboard = () => {
             >
               Log out
             </Button>
+            {auth.currentUser && !auth.currentUser.emailVerified && (
+              <Button
+                onClick={async () => {
+                  try {
+                    await sendEmailVerification(auth.currentUser)
+                    toast.success(
+                      'A verification link has been sent to your email address'
+                    )
+                  } catch (error) {
+                    console.error(error)
+                    toast.error(
+                      'Failed to send verification link. Please try again later'
+                    )
+                  }
+                }}
+                className='w-full bg-blue-600 text-white text-xl hover:bg-blue-700 transition'
+              >
+                Send Vertification Link
+              </Button>
+            )}
           </CardFooter>
         </Card>
       )}

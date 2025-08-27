@@ -15,16 +15,26 @@ import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from './Firebase'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
-
-
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 const Login = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const link = useNavigate()
+  const schema = z.object({
+    email: z.string().email('Email Not Allowed'),
+    password: z.string().min(6, 'Password must have more than 6 characters')
+  })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: zodResolver(schema)
+  })
 
-  const handleLogin = async e => {
-    e.preventDefault()
+  const handleLogin = async data => {
+    const { email, password } = data
     try {
       await signInWithEmailAndPassword(auth, email, password)
       toast.success(`Login Successfully!`)
@@ -49,18 +59,20 @@ const Login = () => {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSubmit(handleLogin)}>
             <div className='flex flex-col gap-6'>
               <div className='grid gap-2'>
                 <Label htmlFor='email'>Email</Label>
                 <Input
                   id='email'
                   type='email'
+                  {...register('email')}
                   placeholder='m@example.com'
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
                   required
                 />
+                {errors.email && (
+                  <p className='text-red-500 text-sm'>{errors.email.message}</p>
+                )}
               </div>
               <div className='grid gap-2'>
                 <div className='flex items-center'>
@@ -75,16 +87,19 @@ const Login = () => {
                 <Input
                   id='password'
                   type='password'
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  {...register('password')}
                   required
                 />
+                {errors.password && (
+                  <p className='text-red-500 text-sm'>
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
             </div>
             <Button
               type='submit'
               className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-lg transition duration-400 mt-5'
-              // onClick={handleLogin}
             >
               Login
             </Button>

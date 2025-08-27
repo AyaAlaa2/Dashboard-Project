@@ -16,17 +16,43 @@ import { toast } from 'sonner'
 import { auth, database, storage } from './Firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  sendEmailVerification,
+  verifyBeforeUpdateEmail
+} from 'firebase/auth'
 
 const UpdatePage = () => {
-  const [userDetailes, setUserDetailes] = useState(null)
+  const schema = z.object({
+    name: z.string().min(2, 'Name must have more than 2 characters'),
+    email: z.string().email('Your email not allowed')
+  })
   const [loading, setLoading] = useState(true)
   const link = useNavigate()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: { name: '', email: '' }
+  })
 
   const fechData = async () => {
     auth.onAuthStateChanged(async user => {
       const docSnap = await getDoc(doc(database, 'Users', user.uid))
       if (docSnap.exists()) {
-        setUserDetailes(docSnap.data())
+        const data = docSnap.data()
+        reset({
+          name: data.name || '',
+          email: data.email || '',
+          password : data.password
+        })
         setLoading(false)
       } else {
         console.log('User in not Log in')
@@ -37,22 +63,39 @@ const UpdatePage = () => {
 
   useEffect(() => {
     fechData()
-  }, [])
+  }, [reset])
 
-  const handleUpdate = async e => {
-    e.preventDefault()
+  const handleUpdate = async data => {
     const user = auth.currentUser
-    const userRef = doc(database, 'Users', user.uid)
+    console.log(data)
 
     try {
-      await updateDoc(userRef, {
-        name: userDetailes.name,
-        email: userDetailes.email
+      await user.reload()
+      if (!user.emailVerified) {
+        toast.error('You need to active your email first !')
+        return
+      }
+
+      if (user.email !== data.email) {
+        const credential = EmailAuthProvider.credential(user.email, data.password)
+        await reauthenticateWithCredential(user, credential)
+        await verifyBeforeUpdateEmail(user, data.email, {
+          url: `${window.location.origin}/dashboard`,
+          handleCodeInApp: true 
+        })
+        await sendEmailVerification(user)
+        toast.success('You need to active new email to update data')
+      }
+
+      await updateDoc(doc(database, 'Users', user.uid), {
+        name: data.name,
+        email: data.email
         // profileImage: userDetailes.avatar
       })
       toast.success('Update Successfully !')
       link('/dashboard')
     } catch (error) {
+      console.error('Update failed:', error)
       toast.error('Oops ! Update failed')
     }
   }
@@ -75,32 +118,37 @@ const UpdatePage = () => {
             </Avatar>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleUpdate}>
+            <form onSubmit={handleSubmit(handleUpdate)}>
               <div className='flex flex-col gap-6'>
                 <div className='flex flex-row gap-2'>
                   <Label htmlFor='email'>Email:</Label>
                   <Input
                     id='email'
                     type='email'
-                    placeholder='m@example.com'
-                    value={userDetailes.email}
-                    onChange={e => {
-                      setUserDetailes({
-                        ...userDetailes,
-                        email: e.target.value
-                      })
-                    }}
+                    {...register('email')}
                   />
+                  {errors.email && (
+                    <p className='text-red-500'>{errors.email.message}</p>
+                  )}
                 </div>
                 <div className='flex flex-row gap-2'>
                   <Label htmlFor='FName'>Name:</Label>
                   <Input
                     id='FName'
                     type='text'
-                    value={userDetailes.name}
-                    onChange={e => {
-                      setUserDetailes({ ...userDetailes, name: e.target.value })
-                    }}
+                    {...register('name')}
+                  />
+                  {errors.name && (
+                    <p className='text-red-500'>{errors.name.message}</p>
+                  )}
+                </div>
+                <div className='flex flex-row gap-2'>
+                  <Label htmlFor='password'>Password:</Label>
+                  <Input
+                    id='password'
+                    type='password'
+                    {...register('password')}
+                    disabled
                   />
                 </div>
                 {/* <div className='flex flex-row gap-2'>
