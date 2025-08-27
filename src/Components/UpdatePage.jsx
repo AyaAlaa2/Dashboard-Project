@@ -15,6 +15,7 @@ import { Label } from '@/Components/ui/label'
 import { toast } from 'sonner'
 import { auth, database, storage } from './Firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -43,7 +44,7 @@ const UpdatePage = () => {
     defaultValues: { name: '', email: '' }
   })
 
-  const fechData = async () => {
+  const fetchData = async () => {
     auth.onAuthStateChanged(async user => {
       const docSnap = await getDoc(doc(database, 'Users', user.uid))
       if (docSnap.exists()) {
@@ -51,7 +52,7 @@ const UpdatePage = () => {
         reset({
           name: data.name || '',
           email: data.email || '',
-          password : data.password
+          password: data.password
         })
         setLoading(false)
       } else {
@@ -62,29 +63,29 @@ const UpdatePage = () => {
   }
 
   useEffect(() => {
-    fechData()
+    fetchData()
   }, [reset])
 
   const handleUpdate = async data => {
     const user = auth.currentUser
-    console.log(data)
 
     try {
       await user.reload()
-      if (!user.emailVerified) {
-        toast.error('You need to active your email first !')
-        return
-      }
-
       if (user.email !== data.email) {
-        const credential = EmailAuthProvider.credential(user.email, data.password)
+        const credential = EmailAuthProvider.credential(
+          user.email,
+          user.password
+        )
         await reauthenticateWithCredential(user, credential)
         await verifyBeforeUpdateEmail(user, data.email, {
-          url: `${window.location.origin}/dashboard`,
-          handleCodeInApp: true 
+          url: `${window.location.origin}/login`,
+          handleCodeInApp: true
         })
+
         await sendEmailVerification(user)
         toast.success('You need to active new email to update data')
+        await signOut(auth)
+        link('/login')
       }
 
       await updateDoc(doc(database, 'Users', user.uid), {
@@ -120,24 +121,20 @@ const UpdatePage = () => {
           <CardContent>
             <form onSubmit={handleSubmit(handleUpdate)}>
               <div className='flex flex-col gap-6'>
-                <div className='flex flex-row gap-2'>
-                  <Label htmlFor='email'>Email:</Label>
-                  <Input
-                    id='email'
-                    type='email'
-                    {...register('email')}
-                  />
+                <div className='flex flex-col gap-2'>
+                  <div className='flex flex-row gap-2'>
+                    <Label htmlFor='email'>Email:</Label>
+                    <Input id='email' type='email' {...register('email')} />
+                  </div>
                   {errors.email && (
                     <p className='text-red-500'>{errors.email.message}</p>
                   )}
                 </div>
-                <div className='flex flex-row gap-2'>
-                  <Label htmlFor='FName'>Name:</Label>
-                  <Input
-                    id='FName'
-                    type='text'
-                    {...register('name')}
-                  />
+                <div className='felx flex-col gap-2'>
+                  <div className='flex flex-row gap-2'>
+                    <Label htmlFor='name'>Name:</Label>
+                    <Input id='name' type='text' {...register('name')} />
+                  </div>
                   {errors.name && (
                     <p className='text-red-500'>{errors.name.message}</p>
                   )}

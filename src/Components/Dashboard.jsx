@@ -23,13 +23,11 @@ const Dashboard = () => {
   const [userDetailes, setUserDetailes] = useState(null)
   const [loading, setLoading] = useState(true)
   const link = useNavigate()
-  const fechData = async () => {
+  const fetchData = async () => {
+    // const user = auth.currentUser
     auth.onAuthStateChanged(async user => {
       const docSnap = await getDoc(doc(database, 'Users', user.uid))
       if (docSnap.exists()) {
-        if (!user.emailVerified) {
-          toast.info('You need to active your email !')
-        }
         setUserDetailes(docSnap.data())
         setLoading(false)
       } else {
@@ -48,8 +46,18 @@ const Dashboard = () => {
     }
   }
 
+  const sendValidation = async () => {
+    try {
+      await sendEmailVerification(auth.currentUser)
+      toast.success('A verification link has been sent to your email address')
+    } catch (error) {
+      console.error(error)
+      toast.error('Failed to send verification link. Please try again later')
+    }
+  }
+
   useEffect(() => {
-    fechData()
+    fetchData()
   }, [])
   return (
     <div className='w-full flex justify-center items-center h-[100vh] bg-black'>
@@ -96,6 +104,13 @@ const Dashboard = () => {
               Update
             </Button>
             <Button
+              onClick={sendValidation}
+              className='w-full bg-blue-600 text-white text-xl hover:bg-blue-700 transition'
+            >
+              Send Vertification Link
+            </Button>
+
+            <Button
               type='submit'
               className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-md transition duration-400 hover:bg-black/80'
               onClick={() => {
@@ -104,26 +119,6 @@ const Dashboard = () => {
             >
               Log out
             </Button>
-            {auth.currentUser && !auth.currentUser.emailVerified && (
-              <Button
-                onClick={async () => {
-                  try {
-                    await sendEmailVerification(auth.currentUser)
-                    toast.success(
-                      'A verification link has been sent to your email address'
-                    )
-                  } catch (error) {
-                    console.error(error)
-                    toast.error(
-                      'Failed to send verification link. Please try again later'
-                    )
-                  }
-                }}
-                className='w-full bg-blue-600 text-white text-xl hover:bg-blue-700 transition'
-              >
-                Send Vertification Link
-              </Button>
-            )}
           </CardFooter>
         </Card>
       )}
