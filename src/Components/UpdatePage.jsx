@@ -33,6 +33,9 @@ const UpdatePage = () => {
     email: z.string().email('Your email not allowed')
   })
   const [loading, setLoading] = useState(true)
+  const [profileImageURL, setProfileImageURL] = useState('')
+  const [newImageFile, setNewImageFile] = useState(null)
+
   const link = useNavigate()
   const {
     register,
@@ -53,7 +56,9 @@ const UpdatePage = () => {
           name: data.name || '',
           email: data.email || '',
           password: data.password
+          // profileImage: data.imageURL
         })
+        setProfileImageURL(data.profileImage || '')
         setLoading(false)
       } else {
         console.log('User in not Log in')
@@ -66,38 +71,62 @@ const UpdatePage = () => {
     fetchData()
   }, [reset])
 
+  const uploadImageToCloudinary = async file => {
+    const data = new FormData()
+    data.append('file', file)
+    data.append('upload_preset', 'unsigned_preset') // تأكد من صحته
+    data.append('cloud_name', 'dv71q60kp') // استبدله بـ cloud_name الخاص فيك
+
+    const res = await fetch(
+      'https://api.cloudinary.com/v1_1/dv71q60kp/image/upload',
+      {
+        method: 'POST',
+        body: data
+      }
+    )
+
+    const result = await res.json()
+    return result.secure_url
+  }
+
   const handleUpdate = async data => {
     const user = auth.currentUser
+    if (!user) return toast.error('user not logged in')
 
     try {
-      await user.reload()
+      let newImageURL = profileImageURL
+
+      if (newImageFile) {
+        newImageURL = await uploadImageToCloudinary(newImageFile)
+      }
+
       if (user.email !== data.email) {
-        const credential = EmailAuthProvider.credential(
-          user.email,
-          user.password
-        )
+        const password = prompt('Enter your current password : ')
+        const credential = EmailAuthProvider.credential(user.email, password)
         await reauthenticateWithCredential(user, credential)
         await verifyBeforeUpdateEmail(user, data.email, {
           url: `${window.location.origin}/login`,
           handleCodeInApp: true
         })
-
-        await sendEmailVerification(user)
-        toast.success('You need to active new email to update data')
-        await signOut(auth)
-        link('/login')
       }
 
       await updateDoc(doc(database, 'Users', user.uid), {
         name: data.name,
-        email: data.email
-        // profileImage: userDetailes.avatar
+        email: data.email,
+        profileImage: newImageURL
       })
+      setProfileImageURL(newImageURL)
       toast.success('Update Successfully !')
       link('/dashboard')
     } catch (error) {
       console.error('Update failed:', error)
       toast.error('Oops ! Update failed')
+    }
+  }
+
+  const changePhoto = e => {
+    if (e.target.files && e.target.files[0]) {
+      setNewImageFile(e.target.files[0])
     }
   }
 
@@ -114,8 +143,8 @@ const UpdatePage = () => {
               Update Data
             </CardTitle>
             <Avatar className='w-12 h-12 inline-block'>
-              <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src={profileImageURL} alt='Profile picture' />
+              <AvatarFallback>Image</AvatarFallback>
             </Avatar>
           </CardHeader>
           <CardContent>
@@ -140,18 +169,14 @@ const UpdatePage = () => {
                   )}
                 </div>
                 <div className='flex flex-row gap-2'>
-                  <Label htmlFor='password'>Password:</Label>
+                  <Label htmlFor='Image'>Photo:</Label>
                   <Input
-                    id='password'
-                    type='password'
-                    {...register('password')}
-                    disabled
+                    id='Image'
+                    type='file'
+                    accept='image/*'
+                    onChange={changePhoto}
                   />
                 </div>
-                {/* <div className='flex flex-row gap-2'>
-                  <Label htmlFor='Image'>Photo:</Label>
-                  <Input id='Image' type='file' accept='/image' />
-                </div> */}
               </div>
               <Button
                 type='submit'

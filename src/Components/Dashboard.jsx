@@ -24,7 +24,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
   const link = useNavigate()
   const fetchData = async () => {
-    // const user = auth.currentUser
     auth.onAuthStateChanged(async user => {
       const docSnap = await getDoc(doc(database, 'Users', user.uid))
       if (docSnap.exists()) {
@@ -73,7 +72,7 @@ const Dashboard = () => {
             </CardTitle>
             <Avatar className='w-12 h-12 inline-block'>
               <AvatarImage
-                src='https://github.com/shadcn.png'
+                src={userDetailes.profileImage}
                 alt='Profile picture'
               />
               <AvatarFallback>Image</AvatarFallback>
@@ -81,10 +80,17 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div>
-              <div className='flex flex-col gap-6'>
-                <div className='flex flex-row gap-2'>
-                  <Label>Email :</Label>
-                  <p>{userDetailes.email}</p>
+              <div className='flex flex-col gap-2'>
+                <div className='flex flex-col'>
+                  <div className='flex flex-row gap-2'>
+                    <Label>Email :</Label>
+                    <p>{userDetailes.email}</p>
+                  </div>
+                  {userDetailes.email !== auth.currentUser.email && (
+                    <p className='text-red-500 text-sm mt-2 ps-3'>
+                      You must activate your new email
+                    </p>
+                  )}
                 </div>
                 <div className='flex flex-row gap-2'>
                   <Label htmlFor='FName'>Name :</Label>

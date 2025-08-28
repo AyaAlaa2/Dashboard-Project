@@ -22,7 +22,6 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 const Signup = () => {
-  const [image, setImage] = useState()
   const link = useNavigate()
   const formSchema = z.object({
     name: z.string().min(2, 'Name must have more than 2 characters'),
@@ -33,23 +32,28 @@ const Signup = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    watch
   } = useForm({
-    resolver: zodResolver(formSchema)
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      image: null
+    }
   })
 
   const handleSignup = async data => {
+    console.log(data)
     try {
       const { name, email, password } = data
+      const imageFile = watch('image')?.[0]
+      let imageURL = ''
+      if (imageFile) {
+        imageURL = await uploadImageToCloudinary(imageFile)
+      }
+
       await createUserWithEmailAndPassword(auth, email, password)
       const user = auth.currentUser
 
-      let imageURL = ''
-      // if (image) {
-      //   const imageRef = ref(storage, `profileImages/${user.uid}`)
-      //   await uploadBytes(imageRef, image)
-      //   imageURL = await getDownloadURL(imageRef)
-      // }
       if (user) {
         await setDoc(doc(database, 'Users', user.uid), {
           id: user.uid,
@@ -64,6 +68,25 @@ const Signup = () => {
     } catch (error) {
       toast.error('Oops! Signup failed')
     }
+  }
+
+  const uploadImageToCloudinary = async file => {
+    console.log('Uploading image to Cloudinary:', file)
+
+    const data = new FormData()
+    data.append('file', file)
+    data.append('upload_preset', 'unsigned_preset')
+    data.append('cloud_name', 'dv71q60kp')
+
+    const res = await fetch(
+      'https://api.cloudinary.com/v1_1/dv71q60kp/image/upload',
+      {
+        method: 'POST',
+        body: data
+      }
+    )
+    const result = await res.json()
+    return result.secure_url
   }
 
   return (
@@ -99,12 +122,7 @@ const Signup = () => {
               </div>
               <div className='grid gap-2'>
                 <Label htmlFor='name'>Name</Label>
-                <Input
-                  id='name'
-                  type='text'
-                  {...register('name')}
-                  required
-                />
+                <Input id='name' type='text' {...register('name')} required />
                 {errors.name && (
                   <p className='text-red-500 text-sm'>{errors.name.message}</p>
                 )}
@@ -123,15 +141,15 @@ const Signup = () => {
                   </p>
                 )}
               </div>
-              {/* <div className='grid gap-2'>
+              <div className='grid gap-2'>
                 <Label htmlFor='photo'>Upload Image</Label>
                 <Input
                   id='photo'
                   type='file'
-                  accept="image/*
-                  onChange={e => setImage(e.target.files[0])}
+                  accept='image/*'
+                  {...register('image')}
                 />
-              </div> */}
+              </div>
             </div>
             <Button
               type='submit'
