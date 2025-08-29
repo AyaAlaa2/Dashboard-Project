@@ -25,7 +25,7 @@ import {
   sendEmailVerification,
   verifyBeforeUpdateEmail
 } from 'firebase/auth'
-import { UploadImageToCloudinary } from './uploadImageToCloudinary'
+import { UploadImageToCloudinary } from './UploadImageToCloudinary'
 import { FetchUserData } from './FetchUserData'
 
 const UpdatePage = () => {
