@@ -11,6 +11,7 @@ import DashboardPage from './Pages/DashboardPage'
 import UpdateDataPage from './Pages/UpdateDataPage'
 import PrivateRoute from './Components/PrivateRoute'
 import DarkModeToggle from './Components/DarkModeToggle'
+import ForgetPasswordPage from './Pages/ForgetPasswordPage'
 
 function App () {
   const [user, setUser] = useState(null)
@@ -40,6 +41,7 @@ function App () {
         <Route path='/' element={<LoginPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignupPage />} />
+        <Route path='/resetPassword' element={<ForgetPasswordPage />} />
         <Route
           path='/dashboard'
           element={

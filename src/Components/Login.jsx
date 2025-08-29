@@ -87,12 +87,13 @@ const Login = () => {
                   >
                     Password
                   </Label>
-                  <a
-                    href='#'
-                    className='ml-auto inline-block text-sm underline-offset-4 hover:underline text-white dark:text-black'
+                  <Button
+                    variant='link'
+                    className='ml-auto inline-block text-sm underline-offset-4 cursor-pointer hover:underline text-white dark:text-black'
+                    onClick={() => link('/resetPassword')}
                   >
                     Forgot your password?
-                  </a>
+                  </Button>
                 </div>
                 <Input
                   id='password'
