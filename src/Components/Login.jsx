@@ -110,7 +110,7 @@ const Login = () => {
             </div>
             <Button
               type='submit'
-              className='w-full text-black bg-white/20 dark:text-white dark:bg-black text-xl cursor-pointer hover:shadow-lg transition duration-400 mt-5'
+              className='w-full text-black bg-white/20 dark:text-white dark:bg-black text-xl cursor-pointer hover:shadow-lg transition duration-400 mt-5 cursor-pointer'
             >
               Login
             </Button>

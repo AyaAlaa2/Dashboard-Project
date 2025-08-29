@@ -16,7 +16,7 @@ export const SendValidation = () => {
   return (
     <Button
       onClick={() => handleSendValidation()}
-      className='w-full text-black bg-white/20 dark:text-white dark:bg-black text-xl hover:bg-blue-700 transition'
+      className='w-full text-black bg-white/20 dark:text-white dark:bg-black text-xl hover:bg-blue-700 transition cursor-pointer'
     >
       Send Vertification Link
     </Button>
