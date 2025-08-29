@@ -39,19 +39,21 @@ const Login = () => {
       await signInWithEmailAndPassword(auth, email, password)
       toast.success(`Login Successfully!`)
       link('/dashboard')
-    } catch (e) {
+    } catch {
       toast.error('Oops! Incrrect Email or password')
     }
   }
   return (
-    <div className='w-full flex justify-center items-center h-[100vh] bg-black'>
-      <Card className='w-full max-w-sm bg-white shadow-2xl drop-shadow-[1px_1px_15px_rgb(200,200,200)]'>
+    <div className='w-full flex justify-center items-center h-[100vh] dark:bg-black bg-gray-200'>
+      <Card className='w-full max-w-sm bg-gray-950 dark:bg-gray-200 shadow-2xl drop-shadow-[1px_1px_15px_rgb(200,200,200)]'>
         <CardHeader>
-          <CardTitle className='font-bold text-3xl'>Login</CardTitle>
+          <CardTitle className='font-bold text-3xl text-white dark:text-black'>
+            Login
+          </CardTitle>
           <CardAction>
             <Button
               variant='link'
-              className='cursor-pointer'
+              className='cursor-pointer text-white dark:text-black'
               onClick={() => link('/signup')}
             >
               Sign Up
@@ -62,11 +64,14 @@ const Login = () => {
           <form onSubmit={handleSubmit(handleLogin)}>
             <div className='flex flex-col gap-6'>
               <div className='grid gap-2'>
-                <Label htmlFor='email'>Email</Label>
+                <Label htmlFor='email' className='text-white dark:text-black'>
+                  Email
+                </Label>
                 <Input
                   id='email'
                   type='email'
                   {...register('email')}
+                  className='text-white dark:text-black dark:border dark:border-black'
                   placeholder='m@example.com'
                   required
                 />
@@ -76,10 +81,15 @@ const Login = () => {
               </div>
               <div className='grid gap-2'>
                 <div className='flex items-center'>
-                  <Label htmlFor='password'>Password</Label>
+                  <Label
+                    htmlFor='password'
+                    className='text-white dark:text-black'
+                  >
+                    Password
+                  </Label>
                   <a
                     href='#'
-                    className='ml-auto inline-block text-sm underline-offset-4 hover:underline'
+                    className='ml-auto inline-block text-sm underline-offset-4 hover:underline text-white dark:text-black'
                   >
                     Forgot your password?
                   </a>
@@ -88,6 +98,7 @@ const Login = () => {
                   id='password'
                   type='password'
                   {...register('password')}
+                  className='text-white dark:text-black dark:border dark:border-black'
                   required
                 />
                 {errors.password && (
@@ -99,7 +110,7 @@ const Login = () => {
             </div>
             <Button
               type='submit'
-              className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-lg transition duration-400 mt-5'
+              className='w-full text-black bg-white/20 dark:text-white dark:bg-black text-xl cursor-pointer hover:shadow-lg transition duration-400 mt-5'
             >
               Login
             </Button>

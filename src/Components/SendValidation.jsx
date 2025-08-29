@@ -8,7 +8,7 @@ export const SendValidation = () => {
     try {
       await sendEmailVerification(auth.currentUser)
       toast.success('A verification link has been sent to your email address')
-    } catch (error) {
+    } catch {
       toast.error('Failed to send verification link. Please try again later')
     }
   }
@@ -16,7 +16,7 @@ export const SendValidation = () => {
   return (
     <Button
       onClick={() => handleSendValidation()}
-      className='w-full bg-blue-600 text-white text-xl hover:bg-blue-700 transition'
+      className='w-full text-black bg-white/20 dark:text-white dark:bg-black text-xl hover:bg-blue-700 transition'
     >
       Send Vertification Link
     </Button>

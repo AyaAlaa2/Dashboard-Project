@@ -16,7 +16,7 @@ export const FetchUserData = async ({ onSuccess, onFail }) => {
       } else {
         onFail && onFail()
       }
-    } catch (error) {
+    } catch {
       onFail && onFail()
     }
   })

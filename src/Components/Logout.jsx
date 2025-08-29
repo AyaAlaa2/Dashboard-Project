@@ -11,7 +11,7 @@ export const Logout = () => {
     try {
       await signOut(auth)
       link('/login')
-    } catch (error) {
+    } catch {
       toast.error('Oops ! An error Occured')
     }
   }
@@ -19,7 +19,7 @@ export const Logout = () => {
   return (
     <Button
       type='submit'
-      className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-md transition duration-400 hover:bg-black/80'
+      className='w-full text-black bg-white/20 dark:text-white dark:bg-black text-xl cursor-pointer hover:shadow-md transition duration-400 hover:bg-black/80'
       onClick={() => handleLogout()}
     >
       Log out
