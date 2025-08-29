@@ -25,7 +25,7 @@ import {
   sendEmailVerification,
   verifyBeforeUpdateEmail
 } from 'firebase/auth'
-import { UploadImageToCloudinary } from './UploadImageToCloudinary'
+import { UploadImageCloudinary } from './UploadImageCloudinary'
 import { FetchUserData } from './FetchUserData'
 
 const UpdatePage = () => {
@@ -71,7 +71,7 @@ const UpdatePage = () => {
       let newImageURL = profileImageURL
 
       if (newImageFile) {
-        newImageURL = await UploadImageToCloudinary(newImageFile)
+        newImageURL = await UploadImageCloudinary(newImageFile)
       }
 
       if (user.email !== data.email) {

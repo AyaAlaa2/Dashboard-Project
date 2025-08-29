@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { UploadImageToCloudinary } from './UploadImageToCloudinary'
+import { UploadImageCloudinary } from './UploadImageCloudinary'
 
 const Signup = () => {
   const link = useNavigate()
@@ -47,7 +47,7 @@ const Signup = () => {
       const imageFile = watch('image')?.[0]
       let imageURL = ''
       if (imageFile) {
-        imageURL = await UploadImageToCloudinary(imageFile)
+        imageURL = await UploadImageCloudinary(imageFile)
       }
 
       await createUserWithEmailAndPassword(auth, email, password)

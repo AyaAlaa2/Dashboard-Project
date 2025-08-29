@@ -1,4 +1,4 @@
-export const UploadImageToCloudinary = async file => {
+export const UploadImageCloudinary = async file => {
   const data = new FormData()
   data.append('file', file)
   data.append('upload_preset', 'unsigned_preset')
