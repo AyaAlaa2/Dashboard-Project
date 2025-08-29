@@ -10,54 +10,28 @@ import {
   CardHeader,
   CardTitle
 } from '@/Components/ui/card'
-import { Input } from '@/Components/ui/input'
 import { Label } from '@/Components/ui/label'
-import { toast } from 'sonner'
-import { auth, database, storage } from './Firebase'
-import { doc, getDoc } from 'firebase/firestore'
+import { auth } from './Firebase'
 import { useNavigate } from 'react-router-dom'
-import { signOut } from 'firebase/auth'
-import { sendEmailVerification } from 'firebase/auth'
+import { FetchUserData } from './FetchUserData'
+import { Logout } from './Logout'
+import { SendValidation } from './SendValidation'
 
 const Dashboard = () => {
   const [userDetailes, setUserDetailes] = useState(null)
   const [loading, setLoading] = useState(true)
   const link = useNavigate()
-  const fetchData = async () => {
-    auth.onAuthStateChanged(async user => {
-      const docSnap = await getDoc(doc(database, 'Users', user.uid))
-      if (docSnap.exists()) {
-        setUserDetailes(docSnap.data())
-        setLoading(false)
-      } else {
-        console.log('User in not Log in')
-        setLoading(false)
-      }
-    })
-  }
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth)
-      link('/login')
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const sendValidation = async () => {
-    try {
-      await sendEmailVerification(auth.currentUser)
-      toast.success('A verification link has been sent to your email address')
-    } catch (error) {
-      console.error(error)
-      toast.error('Failed to send verification link. Please try again later')
-    }
-  }
 
   useEffect(() => {
-    fetchData()
+    FetchUserData({
+      onSuccess: data => {
+        setUserDetailes(data)
+        setLoading(false)
+      },
+      onFail: () => setLoading(false)
+    })
   }, [])
+
   return (
     <div className='w-full flex justify-center items-center h-[100vh] bg-black'>
       {loading ? (
@@ -109,22 +83,9 @@ const Dashboard = () => {
             >
               Update
             </Button>
-            <Button
-              onClick={sendValidation}
-              className='w-full bg-blue-600 text-white text-xl hover:bg-blue-700 transition'
-            >
-              Send Vertification Link
-            </Button>
 
-            <Button
-              type='submit'
-              className='w-full bg-black text-white text-xl cursor-pointer hover:shadow-md transition duration-400 hover:bg-black/80'
-              onClick={() => {
-                handleLogout()
-              }}
-            >
-              Log out
-            </Button>
+            <SendValidation />
+            <Logout />
           </CardFooter>
         </Card>
       )}

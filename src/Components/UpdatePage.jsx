@@ -13,9 +13,8 @@ import {
 import { Input } from '@/Components/ui/input'
 import { Label } from '@/Components/ui/label'
 import { toast } from 'sonner'
-import { auth, database, storage } from './Firebase'
+import { auth, database } from './Firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
-import { signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -26,17 +25,20 @@ import {
   sendEmailVerification,
   verifyBeforeUpdateEmail
 } from 'firebase/auth'
+import { UploadImageToCloudinary } from './uploadImageToCloudinary'
+import { FetchUserData } from './FetchUserData'
 
 const UpdatePage = () => {
-  const schema = z.object({
-    name: z.string().min(2, 'Name must have more than 2 characters'),
-    email: z.string().email('Your email not allowed')
-  })
   const [loading, setLoading] = useState(true)
   const [profileImageURL, setProfileImageURL] = useState('')
   const [newImageFile, setNewImageFile] = useState(null)
 
   const link = useNavigate()
+  const schema = z.object({
+    name: z.string().min(2, 'Name must have more than 2 characters'),
+    email: z.string().email('Your email not allowed')
+  })
+
   const {
     register,
     handleSubmit,
@@ -47,47 +49,19 @@ const UpdatePage = () => {
     defaultValues: { name: '', email: '' }
   })
 
-  const fetchData = async () => {
-    auth.onAuthStateChanged(async user => {
-      const docSnap = await getDoc(doc(database, 'Users', user.uid))
-      if (docSnap.exists()) {
-        const data = docSnap.data()
+  useEffect(() => {
+    FetchUserData({
+      onSuccess: data => {
         reset({
           name: data.name || '',
-          email: data.email || '',
-          password: data.password
-          // profileImage: data.imageURL
+          email: data.email || ''
         })
         setProfileImageURL(data.profileImage || '')
         setLoading(false)
-      } else {
-        console.log('User in not Log in')
-        setLoading(false)
-      }
+      },
+      onFail: () => setLoading(false)
     })
-  }
-
-  useEffect(() => {
-    fetchData()
   }, [reset])
-
-  const uploadImageToCloudinary = async file => {
-    const data = new FormData()
-    data.append('file', file)
-    data.append('upload_preset', 'unsigned_preset') // تأكد من صحته
-    data.append('cloud_name', 'dv71q60kp') // استبدله بـ cloud_name الخاص فيك
-
-    const res = await fetch(
-      'https://api.cloudinary.com/v1_1/dv71q60kp/image/upload',
-      {
-        method: 'POST',
-        body: data
-      }
-    )
-
-    const result = await res.json()
-    return result.secure_url
-  }
 
   const handleUpdate = async data => {
     const user = auth.currentUser
@@ -97,7 +71,7 @@ const UpdatePage = () => {
       let newImageURL = profileImageURL
 
       if (newImageFile) {
-        newImageURL = await uploadImageToCloudinary(newImageFile)
+        newImageURL = await UploadImageToCloudinary(newImageFile)
       }
 
       if (user.email !== data.email) {

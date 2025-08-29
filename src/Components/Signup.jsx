@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button } from '@/Components/ui/button'
 import {
   Card,
@@ -12,14 +12,14 @@ import {
 import { Input } from '@/Components/ui/input'
 import { Label } from '@/Components/ui/label'
 import { toast } from 'sonner'
-import { auth, database, storage } from './Firebase'
+import { auth, database } from './Firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { UploadImageToCloudinary } from './uploadImageToCloudinary'
 
 const Signup = () => {
   const link = useNavigate()
@@ -28,7 +28,6 @@ const Signup = () => {
     email: z.string().email('Invaled Email'),
     password: z.string().min(6, 'Password must have more than 6 characters')
   })
-
   const {
     register,
     handleSubmit,
@@ -42,13 +41,13 @@ const Signup = () => {
   })
 
   const handleSignup = async data => {
-    console.log(data)
     try {
       const { name, email, password } = data
+
       const imageFile = watch('image')?.[0]
       let imageURL = ''
       if (imageFile) {
-        imageURL = await uploadImageToCloudinary(imageFile)
+        imageURL = await UploadImageToCloudinary(imageFile)
       }
 
       await createUserWithEmailAndPassword(auth, email, password)
@@ -63,30 +62,12 @@ const Signup = () => {
           profileImage: imageURL
         })
       }
+
       link('/login')
       toast.success(`Signup Successfully! Welcome ${name}`)
     } catch (error) {
       toast.error('Oops! Signup failed')
     }
-  }
-
-  const uploadImageToCloudinary = async file => {
-    console.log('Uploading image to Cloudinary:', file)
-
-    const data = new FormData()
-    data.append('file', file)
-    data.append('upload_preset', 'unsigned_preset')
-    data.append('cloud_name', 'dv71q60kp')
-
-    const res = await fetch(
-      'https://api.cloudinary.com/v1_1/dv71q60kp/image/upload',
-      {
-        method: 'POST',
-        body: data
-      }
-    )
-    const result = await res.json()
-    return result.secure_url
   }
 
   return (
@@ -148,6 +129,7 @@ const Signup = () => {
                   type='file'
                   accept='image/*'
                   {...register('image')}
+                  required
                 />
               </div>
             </div>

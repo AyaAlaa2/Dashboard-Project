@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import Login from './Components/Login'
 import './App.css'
 import { ThemeProvider } from 'next-themes'
-import Signup from './Components/Signup'
 import { Toaster } from '@/Components/ui/sonner'
 import { Route, Routes } from 'react-router-dom'
-import Dashboard from './Components/Dashboard'
-import UpdatePage from './Components/UpdatePage'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './Components/Firebase'
+import LoginPage from './Pages/LoginPage'
+import SignupPage from './Pages/SignupPage'
+import DashboardPage from './Pages/DashboardPage'
+import UpdateDataPage from './Pages/UpdateDataPage'
 
 function App ({ Component, pageProps }) {
   const [user, setUser] = useState(null)
@@ -25,11 +25,11 @@ function App ({ Component, pageProps }) {
   return (
     <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
       <Routes>
-        <Route path='/' element={<Login />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<Signup />} />
-        <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='/updateUser' element={<UpdatePage />} />
+        <Route path='/' element={<LoginPage />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/signup' element={<SignupPage />} />
+        <Route path='/dashboard' element={<DashboardPage />} />
+        <Route path='/updateUser' element={<UpdateDataPage />} />
       </Routes>
       <Toaster position='top-center' richColors={true} duration={4000} />
     </ThemeProvider>
