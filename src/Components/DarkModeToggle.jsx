@@ -3,7 +3,7 @@ import { IoMoon } from 'react-icons/io5'
 import { FiSun } from 'react-icons/fi'
 
 export default function DarkModeToggle () {
-  const [isDark, setIsDark] = useState(true)
+  const [isDark, setIsDark] = useState(false)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme')
